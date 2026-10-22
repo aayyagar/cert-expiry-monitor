@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Certificate Expiry Dashboard</title><style>:root{--bg:#f3f4f7;--card:#fff;--ink:#151a2c;--mut:#5b6278;--line:#dcdfe7;--soft:#eef0f4;--ok:#17865f;--warn:#b07a00;--crit:#d9742b;--urg:#c8432b;--exp:#9b1c1c;--err:#6b7280}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1220;--card:#181c2e;--ink:#e9ecf4;--mut:#9ca3ba;--line:#2a3048;--soft:#1f2438;--ok:#3fc48d;--warn:#e7b43b;--crit:#f0a05f;--urg:#f07a62;--exp:#f26d6d;--err:#8c93aa;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+header{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px}
+h1{margin:0;font-size:1.7rem;letter-spacing:-.02em}.sub{color:var(--mut);font-size:.82rem}.mono{font-family:Consolas,ui-monospace,monospace;font-size:.8rem;color:var(--mut)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}.kpi b{display:block;font-size:1.7rem;font-variant-numeric:tabular-nums}.kpi span{font-size:.75rem;color:var(--mut)}
+.kpi.exp b{color:var(--exp)}.kpi.urg b{color:var(--urg)}.kpi.crit b{color:var(--crit)}.kpi.warn b{color:var(--warn)}.kpi.ok b{color:var(--ok)}.kpi.err b{color:var(--err)}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);font-size:.9rem;vertical-align:top}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);background:var(--soft)}
+tr:last-child td{border-bottom:0}
+.days{font-variant-numeric:tabular-nums;white-space:nowrap}.sub{color:var(--mut);font-size:.76rem;font-family:Consolas,ui-monospace,monospace}
+.src{color:var(--mut);font-size:.8rem}.iss{color:var(--mut);font-size:.82rem}.err{color:var(--urg)}
+.pill{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill.expired{background:var(--exp);color:#fff}.pill.urgent{background:var(--urg);color:#fff}.pill.critical{background:var(--crit);color:#fff}.pill.warning{background:var(--warn);color:#1a1a1a}.pill.ok{background:var(--soft);color:var(--ok)}.pill.error{background:var(--soft);color:var(--err)}
+.leg{margin-top:14px;font-size:.8rem;color:var(--mut)}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(3,1fr)}.iss,.src{display:none}th:nth-child(5),th:nth-child(6),td:nth-child(5),td:nth-child(6){display:none}}</style></head><body><div class="w">
+<header><div><div class="mono">TLS / SSL CERTIFICATE EXPIRY</div><h1>Certificate Dashboard</h1><div class="sub">2026-10-22 19:53 &middot; thresholds 30 / 14 / 7 days &middot; 10 certificate(s)</div></div><div class="mono">Cert Expiry Monitor v1.0.0</div></header>
+<div class="kpis">
+<div class="kpi exp"><b>1</b><span>Expired</span></div>
+<div class="kpi urg"><b>2</b><span>&le; 7 days</span></div>
+<div class="kpi crit"><b>2</b><span>&le; 14 days</span></div>
+<div class="kpi warn"><b>1</b><span>&le; 30 days</span></div>
+<div class="kpi ok"><b>3</b><span>Healthy</span></div>
+<div class="kpi err"><b>1</b><span>Unreachable</span></div>
+</div>
+<table><thead><tr><th>Status</th><th>Expires in</th><th>Certificate</th><th>Not after</th><th>Source</th><th>Issuer / detail</th></tr></thead>
+<tbody><tr class='sev-expired'>
+<td><span class='pill expired'>Expired</span></td>
+<td class='days'>expired 4d ago</td>
+<td>legacy.contoso.com<div class='sub'>legacy.contoso.com:443</div></td>
+<td>2026-10-18</td>
+<td class='src'>Endpoint</td>
+<td class='iss'>CN=Contoso Issuing CA</td>
+</tr>
+<tr class='sev-urgent'>
+<td><span class='pill urgent'>Urgent</span></td>
+<td class='days'>3 d</td>
+<td>portal.contoso.com<div class='sub'>WEB01 / Default Web Site:443</div></td>
+<td>2026-10-25</td>
+<td class='src'>IIS</td>
+<td class='iss'>CN=Contoso Issuing CA</td>
+</tr>
+<tr class='sev-urgent'>
+<td><span class='pill urgent'>Urgent</span></td>
+<td class='days'>5 d</td>
+<td>vpn.contoso.com<div class='sub'>vpn.contoso.com:443</div></td>
+<td>2026-10-27</td>
+<td class='src'>Endpoint</td>
+<td class='iss'>CN=Sectigo RSA Domain Validation Secure Server CA</td>
+</tr>
+<tr class='sev-critical'>
+<td><span class='pill critical'>Critical</span></td>
+<td class='days'>9 d</td>
+<td>wsus.corp.contoso.com<div class='sub'>LocalMachine\My</div></td>
+<td>2026-10-31</td>
+<td class='src'>LocalStore</td>
+<td class='iss'>CN=Contoso Issuing CA</td>
+</tr>
+<tr class='sev-critical'>
+<td><span class='pill critical'>Critical</span></td>
+<td class='days'>11 d</td>
+<td>mail.contoso.com<div class='sub'>mail.contoso.com:993</div></td>
+<td>2026-11-02</td>
+<td class='src'>Endpoint</td>
+<td class='iss'>CN=DigiCert Global G2 TLS RSA SHA256 2020 CA1</td>
+</tr>
+<tr class='sev-warning'>
+<td><span class='pill warning'>Warning</span></td>
+<td class='days'>24 d</td>
+<td>api.contoso.com<div class='sub'>api.contoso.com:443</div></td>
+<td>2026-11-15</td>
+<td class='src'>Endpoint</td>
+<td class='iss'>CN=Let&#39;s Encrypt R3</td>
+</tr>
+<tr class='sev-error'>
+<td><span class='pill error'>Error</span></td>
+<td class='days'>-</td>
+<td>down.contoso.com:443<div class='sub'>down.contoso.com:443</div></td>
+<td>-</td>
+<td class='src'>Endpoint</td>
+<td class='iss'><span class='err'>connection timed out after 5 s</span></td>
+</tr>
+<tr class='sev-ok'>
+<td><span class='pill ok'>OK</span></td>
+<td class='days'>58 d</td>
+<td>www.contoso.com<div class='sub'>www.contoso.com:443</div></td>
+<td>2026-12-19</td>
+<td class='src'>Endpoint</td>
+<td class='iss'>CN=DigiCert TLS RSA SHA256 2020 CA1</td>
+</tr>
+<tr class='sev-ok'>
+<td><span class='pill ok'>OK</span></td>
+<td class='days'>120 d</td>
+<td>dc01.corp.contoso.com<div class='sub'>LocalMachine\My</div></td>
+<td>2027-02-19</td>
+<td class='src'>LocalStore</td>
+<td class='iss'>CN=Contoso Issuing CA</td>
+</tr>
+<tr class='sev-ok'>
+<td><span class='pill ok'>OK</span></td>
+<td class='days'>210 d</td>
+<td>*.contoso.com<div class='sub'>WEB02 / API Site:443</div></td>
+<td>2027-05-20</td>
+<td class='src'>IIS</td>
+<td class='iss'>CN=DigiCert TLS RSA SHA256 2020 CA1</td>
+</tr></tbody></table>
+<p class="leg">6 certificate(s) need attention. Severity bands: Expired, Urgent (&le; 7 d), Critical (&le; 14 d), Warning (&le; 30 d). Generated by Cert Expiry Monitor &middot; github.com/aayyagar/cert-expiry-monitor</p>
+</div></body></html>

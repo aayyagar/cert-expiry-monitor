@@ -1,0 +1,10 @@
+# One host:port per line. Lines starting with # are ignored.
+# HTTPS
+www.example.com:443
+portal.example.com:443
+# LDAPS
+dc01.corp.example.com:636
+# SMTPS / IMAPS
+mail.example.com:993
+# Custom app port
+api.example.com:8443
