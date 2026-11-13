@@ -81,15 +81,15 @@ function Get-Severity {
 }
 
 function Add-Result {
-    param($Source, $Target, $Subject, $Issuer, $NotAfter, $NotBefore, $Thumbprint, $San, $Error)
+    param($Source, $Target, $Subject, $Issuer, $NotAfter, $NotBefore, $Thumbprint, $San, $ErrorMessage)
     $days = if ($NotAfter) { [int][math]::Floor(($NotAfter - $Script:Now).TotalDays) } else { $null }
     $Script:Results.Add([pscustomobject]@{
             Source = $Source; Target = $Target
             Subject = $Subject; Issuer = $Issuer
             NotAfter = $NotAfter; NotBefore = $NotBefore
             DaysToExpiry = $days
-            Severity = if ($Error) { 'Error' } else { Get-Severity $days }
-            Thumbprint = $Thumbprint; San = $San; Error = $Error
+            Severity = if ($ErrorMessage) { 'Error' } else { Get-Severity $days }
+            Thumbprint = $Thumbprint; San = $San; Error = $ErrorMessage
         })
 }
 
@@ -114,10 +114,10 @@ function Test-Endpoint {
                 if ($ext.Oid.Value -eq '2.5.29.17') { $san = $ext.Format($false) }
             }
             Add-Result -Source 'Endpoint' -Target "${HostName}:${Port}" -Subject $cert.Subject -Issuer $cert.Issuer `
-                -NotAfter $cert.NotAfter -NotBefore $cert.NotBefore -Thumbprint $cert.Thumbprint -San $san -Error $null
+                -NotAfter $cert.NotAfter -NotBefore $cert.NotBefore -Thumbprint $cert.Thumbprint -San $san -ErrorMessage $null
         } finally { $ssl.Dispose() }
     } catch {
-        Add-Result -Source 'Endpoint' -Target "${HostName}:${Port}" -Subject '' -Issuer '' -NotAfter $null -NotBefore $null -Thumbprint '' -San '' -Error $_.Exception.Message
+        Add-Result -Source 'Endpoint' -Target "${HostName}:${Port}" -Subject '' -Issuer '' -NotAfter $null -NotBefore $null -Thumbprint '' -San '' -ErrorMessage $_.Exception.Message
     } finally { $tcp.Dispose() }
 }
 
@@ -128,10 +128,10 @@ function Get-LocalStoreCerts {
         foreach ($c in $certs) {
             $san = ($c.Extensions | Where-Object { $_.Oid.Value -eq '2.5.29.17' } | ForEach-Object { $_.Format($false) }) -join ''
             Add-Result -Source 'LocalStore' -Target "$StoreLocation\$StoreName" -Subject $c.Subject -Issuer $c.Issuer `
-                -NotAfter $c.NotAfter -NotBefore $c.NotBefore -Thumbprint $c.Thumbprint -San $san -Error $null
+                -NotAfter $c.NotAfter -NotBefore $c.NotBefore -Thumbprint $c.Thumbprint -San $san -ErrorMessage $null
         }
     } catch {
-        Add-Result -Source 'LocalStore' -Target "$StoreLocation\$StoreName" -Subject '' -Issuer '' -NotAfter $null -NotBefore $null -Thumbprint '' -San '' -Error $_.Exception.Message
+        Add-Result -Source 'LocalStore' -Target "$StoreLocation\$StoreName" -Subject '' -Issuer '' -NotAfter $null -NotBefore $null -Thumbprint '' -San '' -ErrorMessage $_.Exception.Message
     }
 }
 
@@ -152,9 +152,9 @@ function Get-DemoData {
         @('IIS', 'WEB02 / API Site:443', 'CN=*.contoso.com', 'CN=DigiCert TLS RSA SHA256 2020 CA1', 210, 'DNS Name=*.contoso.com')
     )
     foreach ($r in $rows) {
-        Add-Result -Source $r[0] -Target $r[1] -Subject $r[2] -Issuer $r[3] -NotAfter $now.AddDays($r[4]) -NotBefore $now.AddDays($r[4] - 365) -Thumbprint ((([guid]::NewGuid().ToString('N')+[guid]::NewGuid().ToString('N')).Substring(0,40))) -San $r[5] -Error $null
+        Add-Result -Source $r[0] -Target $r[1] -Subject $r[2] -Issuer $r[3] -NotAfter $now.AddDays($r[4]) -NotBefore $now.AddDays($r[4] - 365) -Thumbprint ((([guid]::NewGuid().ToString('N')+[guid]::NewGuid().ToString('N')).Substring(0,40))) -San $r[5] -ErrorMessage $null
     }
-    Add-Result -Source 'Endpoint' -Target 'down.contoso.com:443' -Subject '' -Issuer '' -NotAfter $null -NotBefore $null -Thumbprint '' -San '' -Error 'connection timed out after 5 s'
+    Add-Result -Source 'Endpoint' -Target 'down.contoso.com:443' -Subject '' -Issuer '' -NotAfter $null -NotBefore $null -Thumbprint '' -San '' -ErrorMessage 'connection timed out after 5 s'
 }
 
 # ---------------------------------------------------------------------------------------------
